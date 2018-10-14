@@ -46,6 +46,52 @@ app.get('/api/products/:ProductId', (request, response) => {
         console.log(e);
     }
 })
+app.delete('/api/products/:ProductId', (request, response) => {
+    console.log('DELETE => /api/products/:ProductId');
+    console.log(request.params)
+    try {
+        let productId = request.params.ProductId;
+        let actionFindById = (error, product) => {
+            try {
+                if (error) response.status(500).send({ message: "Error al encontrar un producto" });
+                if (error) response.status(404).send({ message: "No se encontro el proucto" });
+                Product.remove(actionRemove);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        let actionRemove = error => {
+            try {
+                if (error) response.status(500).send({ message: "Error al encontrar un producto" });
+                response.status(200).send({ message: "El producto se elimno correctamente"  });
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        Product.findById(productId, succes);
+    } catch (e) {
+        console.log(e);
+    }
+})
+app.put('/api/products/:ProductId', (request, response) => {
+    console.log('PUT => /api/products/:ProductId');
+    console.log(request.params)
+    try {
+        let productId = request.params.ProductId;
+        let actionFindByIdAndUpdate = (error, productUpdate) => {
+            try {
+                if (error) response.status(500).send({ message: "Error al actualizar un producto" });
+                if (error) response.status(404).send({ message: "No se encontro el proucto" });
+                response.status(200).send({ productUpdate });
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        Product.findByIdAndUpdate(productId, request.body, actionFindByIdAndUpdate);
+    } catch (e) {
+        console.log(e);
+    }
+})
 app.post('/api/products', (request, response) => {
     console.log('POST => /api/products');
     console.log(request.body);

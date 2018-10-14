@@ -1,5 +1,16 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const NameSpace = require('../../Library/System/namespace');
+NameSpace.Model.Product = class {
+
+}
+
+
+
+
+
+
+
+
+
 
 const productSchema = Schema({
     name: String,
