@@ -13,16 +13,16 @@ app.get('/api/products', (request, response) => {
     console.log(request.params)
     try {
         let productId = request.params.ProductId;
-        let success = (error, product) => {
+        let actionFind = (error, listproduct) => {
             try {
                 if (error) response.status(500).send({ message: "Error al encontrar un producto" });
-                if (error) response.status(404).send({ message: "No se encontro el proucto" });
-                response.status(200).send({ product });
+                if (!listproduct) response.status(404).send({ message: "No se encontro el proucto" });
+                response.status(200).send({ listproduct });
             } catch (e) {
                 console.log(e);
             }
         }
-        Product.find({}, success);
+        Product.find({}, actionFind);
     } catch (e) {
         console.log(e);
     }
@@ -32,16 +32,62 @@ app.get('/api/products/:ProductId', (request, response) => {
     console.log(request.params)
     try {
         let productId = request.params.ProductId;
-        let succes = (error, product) => {
+        let actionFindById = (error, product) => {
             try {
                 if (error) response.status(500).send({ message: "Error al encontrar un producto" });
-                if (error) response.status(404).send({ message: "No se encontro el proucto" });
+                if (!product) response.status(404).send({ message: "No se encontro el proucto" });
                 response.status(200).send({ product });
             } catch (e) {
                 console.log(e);
             }
         }
-        Product.findById(productId, succes);
+        Product.findById(productId, actionFindById);
+    } catch (e) {
+        console.log(e);
+    }
+})
+app.delete('/api/products/:ProductId', (request, response) => {
+    console.log('DELETE => /api/products/:ProductId');
+    console.log(request.params)
+    try {
+        let productId = request.params.ProductId;
+        let actionFindById = (error, product) => {
+            try {
+                if (error) response.status(500).send({ message: "Error al encontrar un producto" });
+                if (!product) response.status(404).send({ message: "No se encontro el producto a eliminar" });
+                product.remove(actionRemove);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        let actionRemove = (error) => {
+            try {
+                if (error) response.status(500).send({ message: "Error al eliminar un producto" });
+                response.status(200).send({  message: "El producto ha sido eliminado"  });
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        Product.findById(productId, actionFindById);
+    } catch (e) {
+        console.log(e);
+    }
+})
+app.put('/api/products/:ProductId', (request, response) => {
+    console.log('PUT => /api/products/:ProductId');
+    console.log(request.params)
+    try {
+        let productId = request.params.ProductId;
+        let objProductUpdate = request.body;
+        let actionFindByIdAndUpdate = (error) => {
+            try {
+                if (error) response.status(500).send({ message: "Error al actualizar el producto" });
+                response.status(200).send({ message: "El producto ha sido actualizado" });
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        Product.findByIdAndUpdate(productId, objProductUpdate, actionFindByIdAndUpdate);
     } catch (e) {
         console.log(e);
     }
@@ -56,19 +102,23 @@ app.post('/api/products', (request, response) => {
         product.price = request.body.price;
         product.category = request.body.category;
         product.description = request.body.description;
-        product.save((error, productStored) => {
-            console.log(error, productStored);
-            if (error) response.status(500).send({ message: "Error al salvar un producto" });
-            response.status(200).send({ product: productStored });
-        })
+        let actionSave = (error) => {
+            try {
+                if (error) response.status(500).send({ message: "Error al guardar un producto" });
+                response.status(200).send({ message:"El producto se guardo correctamente" });
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        product.save(actionSave);
     } catch (e) {
         console.log(e);
     }
 })
-mongoose.connect('mongodb://localhost:27017', { useNewUrlParser: true }, (error, response) => {
+mongoose.connect('mongodb://localhost:27017/Store', { useNewUrlParser: true }, (error, response) => {
     try {
         if (error) throw (error);
-        console.log('Connection establish');
+        console.log('Conexión establecida');
         app.listen(port, () => console.log(`API REST corriendo en http//localhost:${port}.`))
     } catch (e) {
         console.log(e)
